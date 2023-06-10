@@ -13,8 +13,8 @@
 
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.3.0/pure-min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pure.css">
-    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pygments.css">
+    <link rel="stylesheet" href="./theme/css/pure.css">
+    <link rel="stylesheet" href="./theme/css/pygments.css">
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/fitvids/1.0.1/jquery.fitvids.min.js"></script>
@@ -33,7 +33,7 @@
                     <header class="header">
                         <hgroup>
                             <img class="avatar" src="/images/profile.png">
-                            <h1 class="brand-main"><a href="http://objects-and-lambdas.com">Objects and Lambdas</a></h1>
+                            <h1 class="brand-main"><a href=".">Objects and Lambdas</a></h1>
                             <p class="tagline">Embracing OOP and FP</p>
                                 <p class="links"><a href="/categories.html">Categories</a></p>
                                 <p class="links"><a href="/tags.html">Tags</a></p>
@@ -60,19 +60,19 @@
                 <header class="post-header">
                     <h1>Let&#8217;s Play! - My Play Framework Learning Journey (7) - Play Caching with&nbsp;Caffeine</h1>
                         <p class="post-meta">
-                            // under                                 <a class="post-category" href="http://objects-and-lambdas.com/tag/scala.html">scala</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/java.html">java</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/play-framework.html">play framework</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/functional-programming.html">functional programming</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/web-framework.html">web framework</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/database.html">database</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/slick.html">slick</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/caching.html">caching</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/testing.html">testing</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/dependency-injection.html">dependency injection</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/caffeine.html">caffeine</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/jsr-107.html">jsr-107</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/jcache.html">jcache</a>
+                            // under                                 <a class="post-category" href="./tag/scala.html">scala</a>
+                                <a class="post-category" href="./tag/java.html">java</a>
+                                <a class="post-category" href="./tag/play-framework.html">play framework</a>
+                                <a class="post-category" href="./tag/functional-programming.html">functional programming</a>
+                                <a class="post-category" href="./tag/web-framework.html">web framework</a>
+                                <a class="post-category" href="./tag/database.html">database</a>
+                                <a class="post-category" href="./tag/slick.html">slick</a>
+                                <a class="post-category" href="./tag/caching.html">caching</a>
+                                <a class="post-category" href="./tag/testing.html">testing</a>
+                                <a class="post-category" href="./tag/dependency-injection.html">dependency injection</a>
+                                <a class="post-category" href="./tag/caffeine.html">caffeine</a>
+                                <a class="post-category" href="./tag/jsr-107.html">jsr-107</a>
+                                <a class="post-category" href="./tag/jcache.html">jcache</a>
                         </p>
                 </header>
             </section>
@@ -112,7 +112,7 @@
 </code></pre></div>
 
 <ul>
-<li>Use the JCache annotations such as @CacheResult at places where results should be cached. An example can be found in <a href="http://objects-and-lambdas.com/learning-play-framework-6.html">this post</a>. It is reproduced&nbsp;here.</li>
+<li>Use the JCache annotations such as @CacheResult at places where results should be cached. An example can be found in <a href="./learning-play-framework-6.html">this post</a>. It is reproduced&nbsp;here.</li>
 </ul>
 <div class="highlight"><pre><span></span><code><span class="nd">@Singleton</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">SomeRepo</span><span class="w"> </span><span class="nd">@Inject</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="kd">val</span><span class="w"> </span><span class="n">dbConfig</span><span class="p">:</span><span class="w"> </span><span class="nc">DatabaseConfig</span><span class="p">[</span><span class="nc">JdbcProfile</span><span class="p">],</span><span class="w"> </span><span class="kd">val</span><span class="w"> </span><span class="n">tables</span><span class="p">:</span><span class="w"> </span><span class="nc">Tables</span><span class="p">,</span><span class="w"> </span><span class="n">cacheManager</span><span class="p">:</span><span class="w"> </span><span class="nc">CacheManager</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -151,13 +151,13 @@
             <ul>
                     <li style="list-style-type: none;">
                         <<
-                        <a href="http://objects-and-lambdas.com/learning-play-framework-6.html">
+                        <a href="./learning-play-framework-6.html">
                             Let&#8217;s Play! - My Play Framework Learning Journey (6) - Play Database&nbsp;Connectivity
                         </a>
                     </li>
                     <li style="list-style-type: none;">
                         >>
-                        <a href="http://objects-and-lambdas.com/learning-play-framework-8.html">
+                        <a href="./learning-play-framework-8.html">
                             Let&#8217;s Play! - My Play Framework Learning Journey (8) - Play Swagger&nbsp;Annotation
                         </a>
                     </li>

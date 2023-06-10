@@ -13,8 +13,8 @@
 
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.3.0/pure-min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pure.css">
-    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pygments.css">
+    <link rel="stylesheet" href="./theme/css/pure.css">
+    <link rel="stylesheet" href="./theme/css/pygments.css">
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/fitvids/1.0.1/jquery.fitvids.min.js"></script>
@@ -33,7 +33,7 @@
                     <header class="header">
                         <hgroup>
                             <img class="avatar" src="/images/profile.png">
-                            <h1 class="brand-main"><a href="http://objects-and-lambdas.com">Objects and Lambdas</a></h1>
+                            <h1 class="brand-main"><a href=".">Objects and Lambdas</a></h1>
                             <p class="tagline">Embracing OOP and FP</p>
                                 <p class="links"><a href="/categories.html">Categories</a></p>
                                 <p class="links"><a href="/tags.html">Tags</a></p>
@@ -60,13 +60,13 @@
                 <header class="post-header">
                     <h1>Let&#8217;s Play! - My Play Framework Learning Journey (9) - Deploy Play Application to&nbsp;Docker</h1>
                         <p class="post-meta">
-                            // under                                 <a class="post-category" href="http://objects-and-lambdas.com/tag/scala.html">scala</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/java.html">java</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/play-framework.html">play framework</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/functional-programming.html">functional programming</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/web-framework.html">web framework</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/container.html">container</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/docker.html">docker</a>
+                            // under                                 <a class="post-category" href="./tag/scala.html">scala</a>
+                                <a class="post-category" href="./tag/java.html">java</a>
+                                <a class="post-category" href="./tag/play-framework.html">play framework</a>
+                                <a class="post-category" href="./tag/functional-programming.html">functional programming</a>
+                                <a class="post-category" href="./tag/web-framework.html">web framework</a>
+                                <a class="post-category" href="./tag/container.html">container</a>
+                                <a class="post-category" href="./tag/docker.html">docker</a>
                         </p>
                 </header>
             </section>
@@ -84,7 +84,7 @@
 
 <p>Explanation of the additional command line parameters to the Docker entry&nbsp;point.</p>
 <ul>
-<li>-Denv=dev - needed for selecting DatabaseConfig, as described in <a href="http://objects-and-lambdas.com/learning-play-framework-6.html">this&nbsp;post</a></li>
+<li>-Denv=dev - needed for selecting DatabaseConfig, as described in <a href="./learning-play-framework-6.html">this&nbsp;post</a></li>
 <li>-Duser.timezone - required for Oracle database. If this is not defined, an exception will be&nbsp;thrown.</li>
 </ul>
 <p>After that you can run (Docker must be installed in your local&nbsp;environment):</p>
@@ -93,7 +93,7 @@
 
 <p>This will create a local image with tag &#8220;name:version&#8221; in your local Docker&nbsp;environment.</p>
 <h1>Dealing with Sensitive&nbsp;Information</h1>
-<p>No sensitive information such as encrypted password should be included in the Docker image produced. Such information should be passed in during run time. For more information on password decryption, refer to <a href="http://objects-and-lambdas.com/learning-play-framework-6.html">this&nbsp;post</a></p>
+<p>No sensitive information such as encrypted password should be included in the Docker image produced. Such information should be passed in during run time. For more information on password decryption, refer to <a href="./learning-play-framework-6.html">this&nbsp;post</a></p>
 <p>One way is to use environment variables. Docker-compose allows environment variables to be kept in a file and passed in when the container is started.
 On the other hand, Play allows reading of properties from environment&nbsp;variables. </p>
 <p>So in order to run the Docker image created with a database that requires user name and password, we can&nbsp;do:</p>
@@ -156,13 +156,13 @@ MY_API_PLAY_PASSWORD=&#39;&lt;encrypted password&gt;&#39;
             <ul>
                     <li style="list-style-type: none;">
                         <<
-                        <a href="http://objects-and-lambdas.com/learning-play-framework-8.html">
+                        <a href="./learning-play-framework-8.html">
                             Let&#8217;s Play! - My Play Framework Learning Journey (8) - Play Swagger&nbsp;Annotation
                         </a>
                     </li>
                     <li style="list-style-type: none;">
                         >>
-                        <a href="http://objects-and-lambdas.com/learning-play-framework-10.html">
+                        <a href="./learning-play-framework-10.html">
                             Let&#8217;s Play! - My Play Framework Learning Journey (10) - Using Jackson Directly for Json&nbsp;Processing
                         </a>
                     </li>

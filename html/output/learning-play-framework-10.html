@@ -13,8 +13,8 @@
 
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.3.0/pure-min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pure.css">
-    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pygments.css">
+    <link rel="stylesheet" href="./theme/css/pure.css">
+    <link rel="stylesheet" href="./theme/css/pygments.css">
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/fitvids/1.0.1/jquery.fitvids.min.js"></script>
@@ -33,7 +33,7 @@
                     <header class="header">
                         <hgroup>
                             <img class="avatar" src="/images/profile.png">
-                            <h1 class="brand-main"><a href="http://objects-and-lambdas.com">Objects and Lambdas</a></h1>
+                            <h1 class="brand-main"><a href=".">Objects and Lambdas</a></h1>
                             <p class="tagline">Embracing OOP and FP</p>
                                 <p class="links"><a href="/categories.html">Categories</a></p>
                                 <p class="links"><a href="/tags.html">Tags</a></p>
@@ -60,17 +60,17 @@
                 <header class="post-header">
                     <h1>Let&#8217;s Play! - My Play Framework Learning Journey (10) - Using Jackson Directly for Json&nbsp;Processing</h1>
                         <p class="post-meta">
-                            // under                                 <a class="post-category" href="http://objects-and-lambdas.com/tag/scala.html">scala</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/java.html">java</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/play-framework.html">play framework</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/functional-programming.html">functional programming</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/web-framework.html">web framework</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/json.html">Json</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/jackson.html">jackson</a>
+                            // under                                 <a class="post-category" href="./tag/scala.html">scala</a>
+                                <a class="post-category" href="./tag/java.html">java</a>
+                                <a class="post-category" href="./tag/play-framework.html">play framework</a>
+                                <a class="post-category" href="./tag/functional-programming.html">functional programming</a>
+                                <a class="post-category" href="./tag/web-framework.html">web framework</a>
+                                <a class="post-category" href="./tag/json.html">Json</a>
+                                <a class="post-category" href="./tag/jackson.html">jackson</a>
                         </p>
                 </header>
             </section>
-            <p>In the update one week ago to my <a href="http://objects-and-lambdas.com/learning-play-framework-5.html">previous post</a> on Json processing, I mentioned that Play Json&#8217;s macro performance is not as good as using a manual serializer. Lightbend <a href="https://github.com/playframework/play-json/pull/69">has done something to that</a> since then. Lightbend support also advised that if performance is of the utmost concern, one can use Jackson directly. I tried that and found that using Jackson directly is noticeably faster than using Play Json, even with manual&nbsp;serializer.</p>
+            <p>In the update one week ago to my <a href="./learning-play-framework-5.html">previous post</a> on Json processing, I mentioned that Play Json&#8217;s macro performance is not as good as using a manual serializer. Lightbend <a href="https://github.com/playframework/play-json/pull/69">has done something to that</a> since then. Lightbend support also advised that if performance is of the utmost concern, one can use Jackson directly. I tried that and found that using Jackson directly is noticeably faster than using Play Json, even with manual&nbsp;serializer.</p>
 <p>Below is what I did. It mostly follows <a href="https://coderwall.com/p/o--apg/easy-json-un-marshalling-in-scala-with-jackson">this post</a>, with some small&nbsp;variations.</p>
 <p>In terms of dependencies, I aso need the jackson-datatype-jsr310 dependency for dealing with Java 8&nbsp;LocalDate.</p>
 <div class="highlight"><pre><span></span><code><span class="nx">libraryDependencies</span><span class="w"> </span><span class="o">++</span><span class="p">=</span><span class="w"> </span><span class="nx">Seq</span><span class="p">(</span>
@@ -140,13 +140,13 @@
             <ul>
                     <li style="list-style-type: none;">
                         <<
-                        <a href="http://objects-and-lambdas.com/learning-play-framework-9.html">
+                        <a href="./learning-play-framework-9.html">
                             Let&#8217;s Play! - My Play Framework Learning Journey (9) - Deploy Play Application to&nbsp;Docker
                         </a>
                     </li>
                     <li style="list-style-type: none;">
                         >>
-                        <a href="http://objects-and-lambdas.com/fix34-recursion.html">
+                        <a href="./fix34-recursion.html">
                             Implementing Fix34 Algorithm using&nbsp;Recursion
                         </a>
                     </li>

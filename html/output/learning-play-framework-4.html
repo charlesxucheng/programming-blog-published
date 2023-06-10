@@ -13,8 +13,8 @@
 
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.3.0/pure-min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pure.css">
-    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pygments.css">
+    <link rel="stylesheet" href="./theme/css/pure.css">
+    <link rel="stylesheet" href="./theme/css/pygments.css">
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/fitvids/1.0.1/jquery.fitvids.min.js"></script>
@@ -33,7 +33,7 @@
                     <header class="header">
                         <hgroup>
                             <img class="avatar" src="/images/profile.png">
-                            <h1 class="brand-main"><a href="http://objects-and-lambdas.com">Objects and Lambdas</a></h1>
+                            <h1 class="brand-main"><a href=".">Objects and Lambdas</a></h1>
                             <p class="tagline">Embracing OOP and FP</p>
                                 <p class="links"><a href="/categories.html">Categories</a></p>
                                 <p class="links"><a href="/tags.html">Tags</a></p>
@@ -60,16 +60,16 @@
                 <header class="post-header">
                     <h1>Let&#8217;s Play! - My Play Framework Learning Journey (4) - Testing Play&nbsp;Applications</h1>
                         <p class="post-meta">
-                            // under                                 <a class="post-category" href="http://objects-and-lambdas.com/tag/scala.html">scala</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/java.html">java</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/play-framework.html">play framework</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/functional-programming.html">functional programming</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/web-framework.html">web framework</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/guice.html">guice</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/scala-guice.html">scala-guice</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/dependency-injection.html">dependency injection</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/testing.html">testing</a>
-                                <a class="post-category" href="http://objects-and-lambdas.com/tag/json.html">Json</a>
+                            // under                                 <a class="post-category" href="./tag/scala.html">scala</a>
+                                <a class="post-category" href="./tag/java.html">java</a>
+                                <a class="post-category" href="./tag/play-framework.html">play framework</a>
+                                <a class="post-category" href="./tag/functional-programming.html">functional programming</a>
+                                <a class="post-category" href="./tag/web-framework.html">web framework</a>
+                                <a class="post-category" href="./tag/guice.html">guice</a>
+                                <a class="post-category" href="./tag/scala-guice.html">scala-guice</a>
+                                <a class="post-category" href="./tag/dependency-injection.html">dependency injection</a>
+                                <a class="post-category" href="./tag/testing.html">testing</a>
+                                <a class="post-category" href="./tag/json.html">Json</a>
                         </p>
                 </header>
             </section>
@@ -124,7 +124,7 @@
 <p>Take note that Action[A] has two apply methods. One accepts Request[A] and returns Future[Result]. The other accepts a RequestHeader and returns an Accumulator[ByteString, Result]. The Accumulator is basically a sink that accepts the body as a stream of ByteString and returns the result as a Future when&nbsp;run. </p>
 <p>In your test, you should usually call the method that takes Request[A] and returns Future[Result], unless you are attempting to test parsing a raw stream as the body. Pay attention to ensure the right apply() method is&nbsp;called.</p>
 <h1>Dealing with Json data in Request Body for&nbsp;Testing</h1>
-<p>Refer to <a href="http://objects-and-lambdas.com/learning-play-framework-5.html">this blog</a> for more about how to use JsonBodyParser to convert objects to Json data required in request body during&nbsp;testing.</p>
+<p>Refer to <a href="./learning-play-framework-5.html">this blog</a> for more about how to use JsonBodyParser to convert objects to Json data required in request body during&nbsp;testing.</p>
 <h1>Getting and Verifying Json data in Response&nbsp;Body</h1>
 <p>As mentioned above, Play provides a contentAsJson method in play.api.test.Helpers class to expose the content in Json format (returns a JsValue). You can then convert Json to the desired object type via &#8220;JsValue.as[T]&#8221; method, given an implicit Format is in scope.&nbsp;Example:</p>
 <div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">controller</span><span class="p">.</span><span class="n">methodA</span><span class="p">.</span><span class="n">apply</span><span class="p">(...)</span>
@@ -152,13 +152,13 @@
             <ul>
                     <li style="list-style-type: none;">
                         <<
-                        <a href="http://objects-and-lambdas.com/learning-play-framework-3.html">
+                        <a href="./learning-play-framework-3.html">
                             Let&#8217;s Play! - My Play Framework Learning Journey (3) - Dependency Injection with&nbsp;Guice
                         </a>
                     </li>
                     <li style="list-style-type: none;">
                         >>
-                        <a href="http://objects-and-lambdas.com/learning-play-framework-5.html">
+                        <a href="./learning-play-framework-5.html">
                             Let&#8217;s Play! - My Play Framework Learning Journey (5) - Working with&nbsp;Json
                         </a>
                     </li>
