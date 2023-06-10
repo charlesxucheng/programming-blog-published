@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Objects and Lambdas, Embracing OOP and FP">
+
+        <link rel="alternate"  href="http://objects-and-lambdas.com/feeds/all.atom.xml" type="application/atom+xml" title="Objects and Lambdas Full Atom Feed"/>
+
+        <title>Let’s Play! - My Play Framework Learning Journey (6) - Play Database Connectivity // Objects and Lambdas // Embracing OOP and FP</title>
+
+    <link href="/images/favicon.ico" rel="icon">
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.3.0/pure-min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pure.css">
+    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pygments.css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fitvids/1.0.1/jquery.fitvids.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $(".content").fitVids();
+        });
+    </script>
+</head>
+
+<body>
+    <div class="pure-g-r" id="layout">
+        <div class="sidebar pure-u">
+            <div class="cover-img" style="background-image: url('/images/cover.png')">
+                <div class="cover-body">
+                    <header class="header">
+                        <hgroup>
+                            <img class="avatar" src="/images/profile.png">
+                            <h1 class="brand-main"><a href="http://objects-and-lambdas.com">Objects and Lambdas</a></h1>
+                            <p class="tagline">Embracing OOP and FP</p>
+                                <p class="links"><a href="/categories.html">Categories</a></p>
+                                <p class="links"><a href="/tags.html">Tags</a></p>
+                                <p class="links"><a href="/pages/about.html">About</a></p>
+                                <p class="social">
+                                    <a href="https://twitter.com/charlesxucheng">
+                                        <i class="fa fa-twitter fa-3x"></i>
+                                    </a>
+                                    <a href="https://www.linkedin.com/in/cheng-xu-1b3a1b21/">
+                                        <i class="fa fa-linkedin fa-3x"></i>
+                                    </a>
+                                    <a href="https://github.com/charlesxucheng">
+                                        <i class="fa fa-github fa-3x"></i>
+                                    </a>
+                                </p>
+                        </hgroup>
+                    </header>
+                </div>
+            </div>
+        </div>
+    <div class="pure-u">
+        <div class="content">
+            <section class="post">
+                <header class="post-header">
+                    <h1>Let&#8217;s Play! - My Play Framework Learning Journey (6) - Play Database&nbsp;Connectivity</h1>
+                        <p class="post-meta">
+                            // under                                 <a class="post-category" href="http://objects-and-lambdas.com/tag/scala.html">scala</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/java.html">java</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/play-framework.html">play framework</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/functional-programming.html">functional programming</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/web-framework.html">web framework</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/database.html">database</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/slick.html">slick</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/hikaricp.html">hikaricp</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/connection-pooling.html">connection pooling</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/h2.html">h2</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/testing.html">testing</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/dependency-injection.html">dependency injection</a>
+                        </p>
+                </header>
+            </section>
+            <p>In this post I will cover aspects of Play database&nbsp;connectivity:</p>
+<ul>
+<li>Swappable database&nbsp;connection</li>
+<li>Database password&nbsp;encryption/decryption</li>
+</ul>
+<p><a href="http://slick.lightbend.com">Slick</a> is used for database connectivity. For how to use Slick <span class="caps">API</span>, please refer to Slick&nbsp;documentation.</p>
+<h1>Swappable Database&nbsp;Connection</h1>
+<p>The objective here is to allow using of different databases for different purpose: in-memory database for local unit testing, and Oracle database for integration testing, acceptance testing and production. Furthermore, for different environments, different database connection string, user name and password should be&nbsp;used.</p>
+<p>Slick provides a DatabaseConfig class that allows you to configure a Slick driver plus a matching Database together. This makes it easy to abstract over different kinds of database systems by simply changing a configuration file. The idea is to inject the right DatabaseConfig instance for different environment and needs. One way is to bind based on an environment&nbsp;variable.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Provides</span><span class="w"> </span><span class="nd">@Singleton</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">provideDatabaseConfig</span><span class="p">(</span><span class="n">lifecycle</span><span class="p">:</span><span class="w"> </span><span class="nc">ApplicationLifecycle</span><span class="p">)(</span><span class="k">implicit</span><span class="w"> </span><span class="n">ec</span><span class="p">:</span><span class="w"> </span><span class="nc">ExecutionContext</span><span class="p">):</span><span class="w"> </span><span class="nc">DatabaseConfig</span><span class="p">[</span><span class="nc">JdbcProfile</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">env</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Option</span><span class="p">(</span><span class="nc">System</span><span class="p">.</span><span class="n">getProperty</span><span class="p">(</span><span class="s">&quot;env&quot;</span><span class="p">)).</span><span class="n">getOrElse</span><span class="p">(</span><span class="s">&quot;localtest&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">dbConf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">env</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="s">&quot;dev&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nc">DbConfigHelper</span><span class="p">(</span><span class="n">conf</span><span class="p">).</span><span class="n">getDecryptedConfig</span><span class="p">(</span><span class="s">&quot;dev_db&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nc">DbConfigHelper</span><span class="p">(</span><span class="n">conf</span><span class="p">).</span><span class="n">getDecryptedConfig</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">lifecycle</span><span class="p">.</span><span class="n">addStopHook</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">    </span><span class="nc">Future</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nc">Try</span><span class="p">(</span><span class="n">dbConf</span><span class="p">.</span><span class="n">db</span><span class="p">.</span><span class="n">close</span><span class="p">())</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="nc">Success</span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Database successfully closed.&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="nc">Failure</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">log</span><span class="p">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;Error occurred while closing database.&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">)</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">dbConf</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>This will bind one of the database configuration defined in Play&#8217;s application.conf, depending on the value of the &#8220;env&#8221; environment&nbsp;variable:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">localtest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="err">profile</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="err">&quot;slick.jdbc.H2Profile$&quot;</span>
+<span class="w">  </span><span class="err">db</span><span class="w"> </span><span class="err">{</span>
+<span class="w">    </span><span class="err">url</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="err">&quot;</span><span class="n">jdbc</span><span class="p">:</span><span class="n">h2</span><span class="o">:</span><span class="n">mem</span><span class="o">:</span><span class="n">test</span><span class="p">;</span><span class="err">INIT=runscript</span><span class="w"> </span><span class="err">from</span><span class="w"> </span><span class="err">&#39;conf/create-schema.sql&#39;&quot;</span>
+<span class="w">    </span><span class="err">driver</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="err">org.h2.Driver</span>
+<span class="w">    </span><span class="err">connectionPool</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="err">disabled</span>
+<span class="w">    </span><span class="err">keepAliveConnection</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="err">true</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="err">}</span>
+
+<span class="nt">dev_db</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="err">profile</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="err">&quot;slick.jdbc.OracleProfile$&quot;</span>
+<span class="w">  </span><span class="err">db</span><span class="w"> </span><span class="err">{</span>
+<span class="w">    </span><span class="err">url</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="err">&quot;</span><span class="n">jdbc</span><span class="p">:</span><span class="n">oracle</span><span class="o">:</span><span class="kc">thin</span><span class="o">:@//&lt;</span><span class="n">server</span><span class="o">&gt;:&lt;</span><span class="n">port</span><span class="o">&gt;/&lt;</span><span class="n">service</span><span class="o">&gt;</span><span class="s2">&quot;</span>
+<span class="s2">    driver = &quot;</span><span class="n">oracle</span><span class="o">.</span><span class="n">jdbc</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">OracleDriver</span><span class="err">&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<ul>
+<li>If env = &#8220;dev&#8221;, the database &#8220;dev_db&#8221; will be&nbsp;injected.</li>
+<li>If env = &#8220;localtest&#8221; or is absent, the in-memory database &#8220;localtest&#8221; will be&nbsp;injected.</li>
+<li>More environments can be&nbsp;added.</li>
+<li>If env is specified but does not match all the above, it will attempt to inject a database with the same name as env&#8217;s&nbsp;value.</li>
+</ul>
+<p>Next, you can inject DatabaseConfig using the standard @Inject annotation, and get the Database object from&nbsp;DatabaseConfig:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Singleton</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SomeRepo</span><span class="w"> </span><span class="nd">@Inject</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="kd">val</span><span class="w"> </span><span class="n">dbConfig</span><span class="p">:</span><span class="w"> </span><span class="nc">DatabaseConfig</span><span class="p">[</span><span class="nc">JdbcProfile</span><span class="p">],</span><span class="w"> </span><span class="kd">val</span><span class="w"> </span><span class="n">tables</span><span class="p">:</span><span class="w"> </span><span class="nc">Tables</span><span class="p">,</span><span class="w"> </span><span class="n">cacheManager</span><span class="p">:</span><span class="w"> </span><span class="nc">CacheManager</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">  </span><span class="k">import</span><span class="w"> </span><span class="nn">dbConfig</span><span class="p">.</span><span class="nn">profile</span><span class="p">.</span><span class="nn">api</span><span class="p">.</span><span class="n">_</span>
+
+<span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dbConfig</span><span class="p">.</span><span class="n">db</span>
+
+<span class="w">  </span><span class="nd">@CacheResult</span><span class="p">(</span><span class="n">cacheName</span><span class="o">=</span><span class="s">&quot;default&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="k">def</span><span class="w"> </span><span class="nf">findAll</span><span class="p">:</span><span class="w"> </span><span class="nc">Future</span><span class="p">[</span><span class="nc">Seq</span><span class="p">[</span><span class="nc">SomeTable</span><span class="p">]]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">tables</span><span class="p">.</span><span class="n">someTable</span><span class="p">.</span><span class="n">result</span><span class="p">)</span>
+
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Here &#8220;Tables&#8221; is the class that defines all the Slick &#8220;entities&#8221;. Ignore the cache related stuff for now - they will be covered in a separate&nbsp;blog.</p>
+<p>Finally, you can pass in a value for the &#8220;env&#8221; environment variable. This can be done in various ways, such as using the -D switch of&nbsp;sbt:</p>
+<div class="highlight"><pre><span></span><code>sbt -Denv=dev run
+</code></pre></div>
+
+<h1>Why not&nbsp;Play-Slick</h1>
+<p>Play has a Play-Slick integration module but it does not handle the swapping of database connections based on run-time configuration such as environment&nbsp;variables.</p>
+<p>The difference between using Play-Slick and using Slick directly&nbsp;is:</p>
+<ul>
+<li>Play-Slick provides database evolution feature, which is similar to what Flyway&nbsp;does. </li>
+<li>Play-Slick takes care of the life-cycle management to create and shut down the connection or connection pool together with your&nbsp;application.</li>
+</ul>
+<p>So if Slick is used directly, one needs to handle the application life-cycle explicitly and shut down the connections when the application is shut&nbsp;down. </p>
+<p>The above is confirmed with Lightbend&#8217;s support&nbsp;team.</p>
+<h1>Using HikariCP as Connection Pool with&nbsp;Slick</h1>
+<p>It is pretty easy to use HikariCP for connection pooling as Slick supports HikariCP as the default pooling implementation. Just define the following&nbsp;dependency:</p>
+<div class="highlight"><pre><span></span><code><span class="nx">libraryDependencies</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;com.typesafe.slick&quot;</span><span class="w"> </span><span class="o">%%</span><span class="w"> </span><span class="s">&quot;slick-hikaricp&quot;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;3.1.1&quot;</span>
+</code></pre></div>
+
+<p>By default pooling will be enabled. To disable pooling,&nbsp;set:</p>
+<div class="highlight"><pre><span></span><code>    connectionPool = disabled
+</code></pre></div>
+
+<p>Configuration of HikariCP can be done in the db configuration. 
+Refer to <a href="http://slick.lightbend.com/doc/3.2.0/api/index.html#slick.jdbc.JdbcBackend$DatabaseFactoryDef@forConfig(path:String,config:com.typesafe.config.Config,driver:java.sql.Driver,classLoader:ClassLoader):JdbcBackend.this.Database">this <span class="caps">API</span> Doc</a> for all the configuration&nbsp;options.</p>
+<h1>Database Password&nbsp;Decryption</h1>
+<p>In some cases your organization will require database passwords stored in files to be encrypted. This means when the application need to use the password to connect to database, it need to decrypt it&nbsp;first.</p>
+<p>This post will not talk about the actual encryption and decryption logic. It will just cover how to use Play&#8217;s externalized configuration mechanism to handle decryption of&nbsp;password.</p>
+<p>First we need to be able to read the credentials information (encrypted password, key and maybe <span class="caps">IV</span> from some externalized settings. Play provides a Configuration object to get the configuration settings put in its configuration files (default is&nbsp;application.conf).</p>
+<p>It might be good to keep the credentials information separate from other configurations. Typesafe Config allows file inclusion, so we can then put the them in another file (say &#8220;credentials.conf&#8221;), and include it in&nbsp;application.conf.</p>
+<div class="highlight"><pre><span></span><code><span class="k">include</span><span class="w"> </span><span class="s2">&quot;credentials&quot;</span>
+</code></pre></div>
+
+<p>Next we want to get the Slick DatabaseConfig object loaded from configuration, decrypt the encrypted password text in the DatabaseConfig object, and replace its password attribute with the decrypted password. Below is an&nbsp;example:</p>
+<div class="highlight"><pre><span></span><code><span class="k">case</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">DbConfigHelper</span><span class="p">(</span><span class="n">conf</span><span class="p">:</span><span class="w"> </span><span class="nc">Configuration</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">  </span><span class="k">def</span><span class="w"> </span><span class="nf">getDecryptedConfig</span><span class="p">(</span><span class="n">db</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">):</span><span class="w"> </span><span class="nc">DatabaseConfig</span><span class="p">[</span><span class="nc">JdbcProfile</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="n">dbConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">DatabaseConfig</span><span class="p">.</span><span class="n">forConfig</span><span class="p">[</span><span class="nc">JdbcProfile</span><span class="p">](</span><span class="n">db</span><span class="p">)</span>
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="n">decryptor</span><span class="p">:</span><span class="w"> </span><span class="nc">Option</span><span class="p">[</span><span class="nc">Decryptor</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">???</span><span class="w"> </span><span class="c1">// create decryptor</span>
+
+<span class="w">    </span><span class="n">decryptor</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">decryptor</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">      </span><span class="kd">val</span><span class="w"> </span><span class="n">decryptedConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dbConfig</span><span class="p">.</span><span class="n">config</span><span class="p">.</span>
+<span class="w">        </span><span class="n">withValue</span><span class="p">(</span><span class="s">&quot;db.password&quot;</span><span class="p">,</span><span class="w"> </span><span class="nc">ConfigValueFactory</span><span class="p">.</span><span class="n">fromAnyRef</span><span class="p">(</span><span class="n">decryptor</span><span class="p">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">dbConfig</span><span class="p">.</span><span class="n">config</span><span class="p">.</span><span class="n">getConfig</span><span class="p">(</span><span class="s">&quot;db&quot;</span><span class="p">).</span><span class="n">getString</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">))))</span>
+<span class="w">      </span><span class="nc">DatabaseConfig</span><span class="p">.</span><span class="n">forConfig</span><span class="p">[</span><span class="nc">JdbcProfile</span><span class="p">](</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">decryptedConfig</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="n">getOrElse</span><span class="w"> </span><span class="n">dbConfig</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Note that your own decryptor <span class="caps">API</span> will probably be different. The above example is just to illustrate how you can replace the password attribute in the DatabaseConfig&nbsp;object.</p>
+<h1>Additional&nbsp;References</h1>
+<ul>
+<li><a href="http://slick.lightbend.com/doc/3.1.1/introduction.html">Slick User&nbsp;Manual</a></li>
+<li><a href="https://stackoverflow.com/questions/35186267/scala-slick-how-can-i-convert-a-select-query-to-json">Convert Select Query Result to <span class="caps">JSON</span></a></li>
+<li><a href="https://stackoverflow.com/questions/32385411/encrypted-database-password-in-play-slick-hikaricp-application">Slick Database Password&nbsp;Decryption</a></li>
+</ul>
+            <a href="#" class="go-top">Go Top</a>
+            <ul>
+                    <li style="list-style-type: none;">
+                        <<
+                        <a href="http://objects-and-lambdas.com/learning-play-framework-5.html">
+                            Let&#8217;s Play! - My Play Framework Learning Journey (5) - Working with&nbsp;Json
+                        </a>
+                    </li>
+                    <li style="list-style-type: none;">
+                        >>
+                        <a href="http://objects-and-lambdas.com/learning-play-framework-7.html">
+                            Let&#8217;s Play! - My Play Framework Learning Journey (7) - Play Caching with&nbsp;Caffeine
+                        </a>
+                    </li>
+            </ul>            
+    <div class="comments">
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = "objectsandlambdas"; // required: replace example with your forum shortname
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+<footer class="footer">
+    <p>&copy; Charles Xu Cheng &ndash;
+        Built with <a href="https://github.com/PurePelicanTheme/pure-single">Pure Theme</a>
+        for <a href="http://blog.getpelican.com/">Pelican</a>
+    </p>
+</footer>        </div>
+    </div>
+    </div>
+    <script>
+        var $top = $('.go-top');
+
+        // Show or hide the sticky footer button
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                $top.fadeIn(200);
+            } else {
+                $top.fadeOut(200);
+            }
+        });
+
+        // Animate the scroll to top
+        $top.click(function(event) {
+            event.preventDefault();
+            $('html, body').animate({scrollTop: 0}, 300);
+        })
+
+        // Makes sure that the href="#" attached to the <a> elements
+        // don't scroll you back up the page.
+        $('body').on('click', 'a[href="#"]', function(event) {
+            event.preventDefault();
+        });
+    </script>
+    <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+        try {
+            var pageTracker = _gat._getTracker("UA-42943339-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+    </script>
+
+</body>
+</html>

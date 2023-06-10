@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Objects and Lambdas, Embracing OOP and FP">
+
+        <link rel="alternate"  href="http://objects-and-lambdas.com/feeds/all.atom.xml" type="application/atom+xml" title="Objects and Lambdas Full Atom Feed"/>
+
+        <title>Let’s Play! - My Play Framework Learning Journey (7) - Play Caching with Caffeine // Objects and Lambdas // Embracing OOP and FP</title>
+
+    <link href="/images/favicon.ico" rel="icon">
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.3.0/pure-min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pure.css">
+    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pygments.css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fitvids/1.0.1/jquery.fitvids.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $(".content").fitVids();
+        });
+    </script>
+</head>
+
+<body>
+    <div class="pure-g-r" id="layout">
+        <div class="sidebar pure-u">
+            <div class="cover-img" style="background-image: url('/images/cover.png')">
+                <div class="cover-body">
+                    <header class="header">
+                        <hgroup>
+                            <img class="avatar" src="/images/profile.png">
+                            <h1 class="brand-main"><a href="http://objects-and-lambdas.com">Objects and Lambdas</a></h1>
+                            <p class="tagline">Embracing OOP and FP</p>
+                                <p class="links"><a href="/categories.html">Categories</a></p>
+                                <p class="links"><a href="/tags.html">Tags</a></p>
+                                <p class="links"><a href="/pages/about.html">About</a></p>
+                                <p class="social">
+                                    <a href="https://twitter.com/charlesxucheng">
+                                        <i class="fa fa-twitter fa-3x"></i>
+                                    </a>
+                                    <a href="https://www.linkedin.com/in/cheng-xu-1b3a1b21/">
+                                        <i class="fa fa-linkedin fa-3x"></i>
+                                    </a>
+                                    <a href="https://github.com/charlesxucheng">
+                                        <i class="fa fa-github fa-3x"></i>
+                                    </a>
+                                </p>
+                        </hgroup>
+                    </header>
+                </div>
+            </div>
+        </div>
+    <div class="pure-u">
+        <div class="content">
+            <section class="post">
+                <header class="post-header">
+                    <h1>Let&#8217;s Play! - My Play Framework Learning Journey (7) - Play Caching with&nbsp;Caffeine</h1>
+                        <p class="post-meta">
+                            // under                                 <a class="post-category" href="http://objects-and-lambdas.com/tag/scala.html">scala</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/java.html">java</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/play-framework.html">play framework</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/functional-programming.html">functional programming</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/web-framework.html">web framework</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/database.html">database</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/slick.html">slick</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/caching.html">caching</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/testing.html">testing</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/dependency-injection.html">dependency injection</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/caffeine.html">caffeine</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/jsr-107.html">jsr-107</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/jcache.html">jcache</a>
+                        </p>
+                </header>
+            </section>
+            <p>Updated on 2017-05-16: Added enabling of CacheAnnotationsModule in Play configuration&nbsp;file.</p>
+<p>Play provides a simple Cache <span class="caps">API</span> called(surprisingly) CacheApi, and a Cached type for <span class="caps">HTTP</span> Response caching. CacheApi is only supports EhCache as cache&nbsp;implementation. </p>
+<p>I have used Caffeine with Spring Caching in my previous project, so I would like to do similar annotation based caching in Play. The good thing is Caffeine has JCache(<span class="caps">JSR</span>-107) Provider extensions, and Play makes it easy to inject other caching dependencies using&nbsp;Guice.</p>
+<p>To use&nbsp;Caffeine:</p>
+<ul>
+<li>Add Caffeine&nbsp;dependency:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nx">libraryDependencies</span><span class="w"> </span><span class="o">++</span><span class="p">=</span><span class="w"> </span><span class="nx">Seq</span><span class="p">(</span>
+<span class="w">  </span><span class="s">&quot;com.github.ben-manes.caffeine&quot;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;caffeine&quot;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;2.4.0&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;com.github.ben-manes.caffeine&quot;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;jcache&quot;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;2.4.0&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;org.jsr107.ri&quot;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;cache-annotations-ri-guice&quot;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;1.0.0&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;javax.enterprise&quot;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;cdi-api&quot;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;2.0-PFD2&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p>The cdi dependency is needed due to an issue in the dependency of javax.cache:cache-api:1.0. Detailed discussions are <a href="https://github.com/ben-manes/caffeine/issues/151">here</a></p>
+<ul>
+<li>Define the CacheManager bindings in Guice module. JCache has a mechanism to discover the implementation, so if there is only one library implementing JCache in your dependencies, you just need to do&nbsp;this:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">bind</span><span class="p">[</span><span class="nc">CacheManager</span><span class="p">]</span><span class="n">toInstance</span><span class="p">(</span><span class="nc">Caching</span><span class="p">.</span><span class="n">getCachingProvider</span><span class="p">.</span><span class="n">getCacheManager</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Otherwise, you can do&nbsp;this:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">provider</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Caching</span><span class="p">.</span><span class="n">getCachingProvider</span><span class="p">(</span><span class="k">classOf</span><span class="p">[</span><span class="nc">CaffeineCachingProvider</span><span class="p">].</span><span class="n">getName</span><span class="p">)</span>
+<span class="kd">val</span><span class="w"> </span><span class="n">cacheManager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">provider</span><span class="p">.</span><span class="n">getCacheManager</span><span class="p">(</span><span class="n">provider</span><span class="p">.</span><span class="n">getDefaultURI</span><span class="p">,</span><span class="w"> </span><span class="n">provider</span><span class="p">.</span><span class="n">getDefaultClassLoader</span><span class="p">)</span>
+<span class="w">    </span><span class="n">bind</span><span class="p">[</span><span class="nc">CacheResolverFactory</span><span class="p">].</span><span class="n">toInstance</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">DefaultCacheResolverFactory</span><span class="p">(</span><span class="n">cacheManager</span><span class="p">))</span>
+<span class="w">    </span><span class="n">bind</span><span class="p">[</span><span class="nc">CacheManager</span><span class="p">].</span><span class="n">toInstance</span><span class="p">(</span><span class="n">cacheManager</span><span class="p">)</span>
+</code></pre></div>
+
+<ul>
+<li>Add the following line in&nbsp;application.conf:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>play.modules.enabled += &quot;org.jsr107.ri.annotations.guice.module.CacheAnnotationsModule&quot;
+</code></pre></div>
+
+<ul>
+<li>Use the JCache annotations such as @CacheResult at places where results should be cached. An example can be found in <a href="http://objects-and-lambdas.com/learning-play-framework-6.html">this post</a>. It is reproduced&nbsp;here.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nd">@Singleton</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SomeRepo</span><span class="w"> </span><span class="nd">@Inject</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="kd">val</span><span class="w"> </span><span class="n">dbConfig</span><span class="p">:</span><span class="w"> </span><span class="nc">DatabaseConfig</span><span class="p">[</span><span class="nc">JdbcProfile</span><span class="p">],</span><span class="w"> </span><span class="kd">val</span><span class="w"> </span><span class="n">tables</span><span class="p">:</span><span class="w"> </span><span class="nc">Tables</span><span class="p">,</span><span class="w"> </span><span class="n">cacheManager</span><span class="p">:</span><span class="w"> </span><span class="nc">CacheManager</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">  </span><span class="k">import</span><span class="w"> </span><span class="nn">dbConfig</span><span class="p">.</span><span class="nn">profile</span><span class="p">.</span><span class="nn">api</span><span class="p">.</span><span class="n">_</span>
+
+<span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dbConfig</span><span class="p">.</span><span class="n">db</span>
+
+<span class="w">  </span><span class="nd">@CacheResult</span><span class="p">(</span><span class="n">cacheName</span><span class="o">=</span><span class="s">&quot;default&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="k">def</span><span class="w"> </span><span class="nf">findAll</span><span class="p">:</span><span class="w"> </span><span class="nc">Future</span><span class="p">[</span><span class="nc">Seq</span><span class="p">[</span><span class="nc">SomeTable</span><span class="p">]]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">tables</span><span class="p">.</span><span class="n">someTable</span><span class="p">.</span><span class="n">result</span><span class="p">)</span>
+
+<span class="p">}</span>
+</code></pre></div>
+
+<ul>
+<li>As mentioned in <a href="https://github.com/ben-manes/caffeine/wiki/JCache">Caffeine&#8217;s JCache documentation</a>, the Caffeine JCache provider is configured using Typesafe Config library. This means that Caffeine JCache provider can be configured in the same way that Play is configured. What I did is to put Caffeine configurations in a file called caffeine.conf, and included it in the main&nbsp;application.conf.</li>
+</ul>
+<p>Caffeine provides a <a href="https://github.com/ben-manes/caffeine/blob/master/jcache/src/main/resources/reference.conf">reference.conf</a> for the configuration&nbsp;options.</p>
+<ul>
+<li>For testing, you can just use a mock CacheManager without mocking any of its&nbsp;behavior.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">mockCacheManager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mock</span><span class="p">[</span><span class="nc">CacheManager</span><span class="p">]</span>
+<span class="k">override</span><span class="w"> </span><span class="k">def</span><span class="w"> </span><span class="nf">configure</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="p">...</span>
+<span class="w">  </span><span class="n">bind</span><span class="p">[</span><span class="nc">CacheManager</span><span class="p">]</span><span class="n">toInstance</span><span class="p">(</span><span class="n">mockCacheManager</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h1>Additional&nbsp;References</h1>
+<ul>
+<li><a href="https://github.com/ben-manes/caffeine">Caffeine</a></li>
+<li><a href="https://github.com/ben-manes/caffeine/wiki/JCache">Caffeine JCache&nbsp;Extension</a></li>
+<li><a href="https://github.com/ben-manes/caffeine/issues/151">Caffeine Discussion on <span class="caps">CDI</span> Dependency and&nbsp;Testing</a></li>
+</ul>
+            <a href="#" class="go-top">Go Top</a>
+            <ul>
+                    <li style="list-style-type: none;">
+                        <<
+                        <a href="http://objects-and-lambdas.com/learning-play-framework-6.html">
+                            Let&#8217;s Play! - My Play Framework Learning Journey (6) - Play Database&nbsp;Connectivity
+                        </a>
+                    </li>
+                    <li style="list-style-type: none;">
+                        >>
+                        <a href="http://objects-and-lambdas.com/learning-play-framework-8.html">
+                            Let&#8217;s Play! - My Play Framework Learning Journey (8) - Play Swagger&nbsp;Annotation
+                        </a>
+                    </li>
+            </ul>            
+    <div class="comments">
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = "objectsandlambdas"; // required: replace example with your forum shortname
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+<footer class="footer">
+    <p>&copy; Charles Xu Cheng &ndash;
+        Built with <a href="https://github.com/PurePelicanTheme/pure-single">Pure Theme</a>
+        for <a href="http://blog.getpelican.com/">Pelican</a>
+    </p>
+</footer>        </div>
+    </div>
+    </div>
+    <script>
+        var $top = $('.go-top');
+
+        // Show or hide the sticky footer button
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                $top.fadeIn(200);
+            } else {
+                $top.fadeOut(200);
+            }
+        });
+
+        // Animate the scroll to top
+        $top.click(function(event) {
+            event.preventDefault();
+            $('html, body').animate({scrollTop: 0}, 300);
+        })
+
+        // Makes sure that the href="#" attached to the <a> elements
+        // don't scroll you back up the page.
+        $('body').on('click', 'a[href="#"]', function(event) {
+            event.preventDefault();
+        });
+    </script>
+    <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+        try {
+            var pageTracker = _gat._getTracker("UA-42943339-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+    </script>
+
+</body>
+</html>

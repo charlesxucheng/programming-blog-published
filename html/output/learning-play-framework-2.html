@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Objects and Lambdas, Embracing OOP and FP">
+
+        <link rel="alternate"  href="http://objects-and-lambdas.com/feeds/all.atom.xml" type="application/atom+xml" title="Objects and Lambdas Full Atom Feed"/>
+
+        <title>Let’s Play! - My Play Framework Learning Journey (2) - SBT HTTP Proxy Configuration // Objects and Lambdas // Embracing OOP and FP</title>
+
+    <link href="/images/favicon.ico" rel="icon">
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.3.0/pure-min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pure.css">
+    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pygments.css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fitvids/1.0.1/jquery.fitvids.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $(".content").fitVids();
+        });
+    </script>
+</head>
+
+<body>
+    <div class="pure-g-r" id="layout">
+        <div class="sidebar pure-u">
+            <div class="cover-img" style="background-image: url('/images/cover.png')">
+                <div class="cover-body">
+                    <header class="header">
+                        <hgroup>
+                            <img class="avatar" src="/images/profile.png">
+                            <h1 class="brand-main"><a href="http://objects-and-lambdas.com">Objects and Lambdas</a></h1>
+                            <p class="tagline">Embracing OOP and FP</p>
+                                <p class="links"><a href="/categories.html">Categories</a></p>
+                                <p class="links"><a href="/tags.html">Tags</a></p>
+                                <p class="links"><a href="/pages/about.html">About</a></p>
+                                <p class="social">
+                                    <a href="https://twitter.com/charlesxucheng">
+                                        <i class="fa fa-twitter fa-3x"></i>
+                                    </a>
+                                    <a href="https://www.linkedin.com/in/cheng-xu-1b3a1b21/">
+                                        <i class="fa fa-linkedin fa-3x"></i>
+                                    </a>
+                                    <a href="https://github.com/charlesxucheng">
+                                        <i class="fa fa-github fa-3x"></i>
+                                    </a>
+                                </p>
+                        </hgroup>
+                    </header>
+                </div>
+            </div>
+        </div>
+    <div class="pure-u">
+        <div class="content">
+            <section class="post">
+                <header class="post-header">
+                    <h1>Let&#8217;s Play! - My Play Framework Learning Journey (2) - <span class="caps">SBT</span> <span class="caps">HTTP</span> Proxy&nbsp;Configuration</h1>
+                        <p class="post-meta">
+                            // under                                 <a class="post-category" href="http://objects-and-lambdas.com/tag/scala.html">scala</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/java.html">java</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/play-framework.html">play framework</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/functional-programming.html">functional programming</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/web-framework.html">web framework</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/sbt.html">sbt</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/http-proxy.html">http proxy</a>
+                        </p>
+                </header>
+            </section>
+            <p>In order to run the example project, you will need to get <a href="http://www.scala-sbt.org/">sbt</a> installed and configured. The key challenge I had with sbt is to configure it for <span class="caps">HTTP</span> proxy, which is common in corporate&nbsp;environment.</p>
+<p>To make sbt working correctly behind an <span class="caps">HTTP</span> proxy, you can set the following system&nbsp;properties:</p>
+<ul>
+<li>http.proxyHost</li>
+<li>http.proxyPort</li>
+<li>http.proxyUserName</li>
+<li>http.proxyPassword</li>
+<li>https.proxyHost</li>
+<li>https.proxyPort</li>
+<li>https.proxyUserName</li>
+<li>https.proxyPassword</li>
+<li>http.nonProxyHosts</li>
+<li>https.nonProxyHosts (this may not be needed, but worth a try if http.nonProxyHosts is not&nbsp;working)</li>
+</ul>
+<p>It will be easier to install a <span class="caps">NTLM</span> proxy like <a href="http://cntlm.sourceforge.net/"><span class="caps">CNTLM</span></a> so that you don&#8217;t need to specify the user name and password&nbsp;here.</p>
+<p>Take note that if there are multiple hosts to be defined in nonProxyHosts, they are to be separated using &#8220;|&#8221;, as required by <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/net/proxies.html">Java</a>.</p>
+<p>Furthermore, I found that in Windows, &#8220;|&#8221; must be escaped using &#8220;^&#8221;. See example&nbsp;below:</p>
+<div class="highlight"><pre><span></span><code>-Dhttp.proxyHost=localhost -Dhttp.proxyPort=3128 -Dhttps.proxyHost=localhost -Dhttps.proxyPort=3128 -Dhttp.nonProxyHosts=&quot;localhost^|nexus&quot;
+</code></pre></div>
+
+<p>Without the escape character (^), you will get an error &#8220;| was unexpected at this time&#8221;. This might be fixed in the future. See <a href="https://github.com/sbt/sbt-launcher-package/issues/154">this sbt issue in Github</a>.</p>
+<p>The above can be set at the sbt command&nbsp;line:</p>
+<div class="highlight"><pre><span></span><code>sbt -Dhttp.proxyHost=localhost -Dhttp.proxyPort=3128 -Dhttps.proxyHost=localhost -Dhttps.proxyPort=3128 -Dhttp.nonProxyHosts=&quot;localhost^|nexus&quot; compile
+</code></pre></div>
+
+<p>Or in JAVA_OPTS environment&nbsp;variable:</p>
+<div class="highlight"><pre><span></span><code>set JAVA_OPTS=-Dhttp.proxyHost=localhost -Dhttp.proxyPort=3128 -Dhttps.proxyHost=localhost -Dhttps.proxyPort=3128 -Dhttp.nonProxyHosts=&quot;localhost^|nexus&quot;
+</code></pre></div>
+
+<p>sbt on Windows installs a sbt.bat file. This file will look for JAVA_OPTS environment variable and use its&nbsp;value.</p>
+<h1>Additional&nbsp;References</h1>
+<ul>
+<li><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/net/proxies.html">Java 8 Proxy&nbsp;Documentation</a></li>
+<li><a href="https://stackoverflow.com/questions/13803459/how-to-use-sbt-from-behind-prox">Stack Overflow&nbsp;Q&amp;A</a></li>
+<li><a href="https://stackoverflow.com/questions/120797/how-do-i-set-the-proxy-to-be-used-by-the-jvm">Another Stack Overflow&nbsp;Q&amp;A</a></li>
+</ul>
+            <a href="#" class="go-top">Go Top</a>
+            <ul>
+                    <li style="list-style-type: none;">
+                        <<
+                        <a href="http://objects-and-lambdas.com/learning-play-framework-1.html">
+                            Let&#8217;s Play! - My Play Framework Learning Journey (1) -&nbsp;Introduction
+                        </a>
+                    </li>
+                    <li style="list-style-type: none;">
+                        >>
+                        <a href="http://objects-and-lambdas.com/learning-play-framework-3.html">
+                            Let&#8217;s Play! - My Play Framework Learning Journey (3) - Dependency Injection with&nbsp;Guice
+                        </a>
+                    </li>
+            </ul>            
+    <div class="comments">
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = "objectsandlambdas"; // required: replace example with your forum shortname
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+<footer class="footer">
+    <p>&copy; Charles Xu Cheng &ndash;
+        Built with <a href="https://github.com/PurePelicanTheme/pure-single">Pure Theme</a>
+        for <a href="http://blog.getpelican.com/">Pelican</a>
+    </p>
+</footer>        </div>
+    </div>
+    </div>
+    <script>
+        var $top = $('.go-top');
+
+        // Show or hide the sticky footer button
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                $top.fadeIn(200);
+            } else {
+                $top.fadeOut(200);
+            }
+        });
+
+        // Animate the scroll to top
+        $top.click(function(event) {
+            event.preventDefault();
+            $('html, body').animate({scrollTop: 0}, 300);
+        })
+
+        // Makes sure that the href="#" attached to the <a> elements
+        // don't scroll you back up the page.
+        $('body').on('click', 'a[href="#"]', function(event) {
+            event.preventDefault();
+        });
+    </script>
+    <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+        try {
+            var pageTracker = _gat._getTracker("UA-42943339-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+    </script>
+
+</body>
+</html>

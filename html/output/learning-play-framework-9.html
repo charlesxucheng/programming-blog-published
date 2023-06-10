@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Objects and Lambdas, Embracing OOP and FP">
+
+        <link rel="alternate"  href="http://objects-and-lambdas.com/feeds/all.atom.xml" type="application/atom+xml" title="Objects and Lambdas Full Atom Feed"/>
+
+        <title>Let’s Play! - My Play Framework Learning Journey (9) - Deploy Play Application to Docker // Objects and Lambdas // Embracing OOP and FP</title>
+
+    <link href="/images/favicon.ico" rel="icon">
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.3.0/pure-min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pure.css">
+    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pygments.css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fitvids/1.0.1/jquery.fitvids.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $(".content").fitVids();
+        });
+    </script>
+</head>
+
+<body>
+    <div class="pure-g-r" id="layout">
+        <div class="sidebar pure-u">
+            <div class="cover-img" style="background-image: url('/images/cover.png')">
+                <div class="cover-body">
+                    <header class="header">
+                        <hgroup>
+                            <img class="avatar" src="/images/profile.png">
+                            <h1 class="brand-main"><a href="http://objects-and-lambdas.com">Objects and Lambdas</a></h1>
+                            <p class="tagline">Embracing OOP and FP</p>
+                                <p class="links"><a href="/categories.html">Categories</a></p>
+                                <p class="links"><a href="/tags.html">Tags</a></p>
+                                <p class="links"><a href="/pages/about.html">About</a></p>
+                                <p class="social">
+                                    <a href="https://twitter.com/charlesxucheng">
+                                        <i class="fa fa-twitter fa-3x"></i>
+                                    </a>
+                                    <a href="https://www.linkedin.com/in/cheng-xu-1b3a1b21/">
+                                        <i class="fa fa-linkedin fa-3x"></i>
+                                    </a>
+                                    <a href="https://github.com/charlesxucheng">
+                                        <i class="fa fa-github fa-3x"></i>
+                                    </a>
+                                </p>
+                        </hgroup>
+                    </header>
+                </div>
+            </div>
+        </div>
+    <div class="pure-u">
+        <div class="content">
+            <section class="post">
+                <header class="post-header">
+                    <h1>Let&#8217;s Play! - My Play Framework Learning Journey (9) - Deploy Play Application to&nbsp;Docker</h1>
+                        <p class="post-meta">
+                            // under                                 <a class="post-category" href="http://objects-and-lambdas.com/tag/scala.html">scala</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/java.html">java</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/play-framework.html">play framework</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/functional-programming.html">functional programming</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/web-framework.html">web framework</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/container.html">container</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/docker.html">docker</a>
+                        </p>
+                </header>
+            </section>
+            <h1>Running Play Application in&nbsp;Docker</h1>
+<p>To create a local Docker image for the RESTful service, add the following to&nbsp;build.sbt:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">name</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;my-service&quot;</span>
+<span class="nv">version</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;0.1.0-SNAPSHOT&quot;</span>
+
+<span class="nf">enablePlugins</span><span class="p">(</span><span class="nv">JavaAppPackaging</span><span class="p">)</span>
+<span class="nf">enablePlugins</span><span class="p">(</span><span class="nv">DockerPlugin</span><span class="p">)</span>
+
+<span class="k">do</span><span class="nv">ckerBaseImage</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&quot;openjdk:8&quot;</span>
+<span class="k">do</span><span class="nv">ckerEntrypoint</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nf">Seq</span><span class="p">(</span><span class="s">&quot;bin/&lt;your-app&gt;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;-Denv=dev&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;-Duser.timezone=\\\&quot;+08:00\\\&quot;&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Explanation of the additional command line parameters to the Docker entry&nbsp;point.</p>
+<ul>
+<li>-Denv=dev - needed for selecting DatabaseConfig, as described in <a href="http://objects-and-lambdas.com/learning-play-framework-6.html">this&nbsp;post</a></li>
+<li>-Duser.timezone - required for Oracle database. If this is not defined, an exception will be&nbsp;thrown.</li>
+</ul>
+<p>After that you can run (Docker must be installed in your local&nbsp;environment):</p>
+<div class="highlight"><pre><span></span><code>sbt docker:publishLocal
+</code></pre></div>
+
+<p>This will create a local image with tag &#8220;name:version&#8221; in your local Docker&nbsp;environment.</p>
+<h1>Dealing with Sensitive&nbsp;Information</h1>
+<p>No sensitive information such as encrypted password should be included in the Docker image produced. Such information should be passed in during run time. For more information on password decryption, refer to <a href="http://objects-and-lambdas.com/learning-play-framework-6.html">this&nbsp;post</a></p>
+<p>One way is to use environment variables. Docker-compose allows environment variables to be kept in a file and passed in when the container is started.
+On the other hand, Play allows reading of properties from environment&nbsp;variables. </p>
+<p>So in order to run the Docker image created with a database that requires user name and password, we can&nbsp;do:</p>
+<ul>
+<li>Create another conf file called credentials-env.conf. In this file will map the configuration values to environment variables using Play&#8217;s ${?} notation. For&nbsp;example:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>my_db<span class="w"> </span>{
+<span class="w">  </span>db<span class="w"> </span>{
+<span class="w">    </span>user<span class="w"> </span>=<span class="w"> </span><span class="cp">${</span><span class="err">?</span><span class="n">MY_API_PLAY_USER</span><span class="cp">}</span>
+<span class="w">    </span>key<span class="w"> </span>=<span class="w"> </span><span class="cp">${</span><span class="err">?</span><span class="n">MY_API_PLAY_KEY</span><span class="cp">}</span>
+<span class="w">    </span>iv<span class="w"> </span>=<span class="w"> </span><span class="cp">${</span><span class="err">?</span><span class="n">MY_API_PLAY_IV</span><span class="cp">}</span>
+<span class="w">    </span>password<span class="w"> </span>=<span class="w"> </span><span class="cp">${</span><span class="err">?</span><span class="n">MY_API_PLAY_PASSWORD</span><span class="cp">}</span>
+<span class="w">  </span>}
+}
+</code></pre></div>
+
+<ul>
+<li>Include the credentials-env.conf file in application.conf. Since for running in non-Docker environment, you may need another set of credentials, we can define the inclusion order such that if present, credentials-env.conf will override credentials.conf&nbsp;file.</li>
+</ul>
+<div class="highlight"><pre><span></span><code>...
+<span class="k">include</span><span class="w"> </span><span class="s2">&quot;credentials&quot;</span>
+<span class="k">include</span><span class="w"> </span><span class="s2">&quot;credentials-env&quot;</span>
+...
+</code></pre></div>
+
+<ul>
+<li>Create a file (e.g. &#8220;devsecrets.env&#8221;) containing the following environment variables. Take note of the need to use quotes for special characters if any in the Base64 encoded&nbsp;values.</li>
+</ul>
+<div class="highlight"><pre><span></span><code>MY_API_PLAY_USER=&lt;user_name&gt;
+MY_API_PLAY_KEY=&#39;&lt;key&gt;&#39;
+MY_API_PLAY_IV=&#39;&lt;iv&gt;&#39;
+MY_API_PLAY_PASSWORD=&#39;&lt;encrypted password&gt;&#39;
+</code></pre></div>
+
+<p>The keys should match those ${?} variable names in credentials-env.conf so that Play will substitute them with their&nbsp;values.</p>
+<ul>
+<li>Create a docker-compose <span class="caps">YAML</span> file specifying published image and the env variable file name. Examples can be found in the project root&nbsp;folder.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">my-api</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-api:0.1.0-SNAPSHOT</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;9000:9000&quot;</span>
+<span class="w">    </span><span class="nt">env_file</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./conf/devsecrets.env</span>
+</code></pre></div>
+
+<ul>
+<li>Start up the Docker&nbsp;service:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>docker stack deploy --compose-file=docker-compose.yml my-api
+</code></pre></div>
+
+<p>Note: Credentials passed into Docker container in this way will still be visible from a Docker service inspect command output, but they will not be available inside the Docker&nbsp;image.</p>
+<h1>Additional&nbsp;References</h1>
+<ul>
+<li><a href="https://www.ctl.io/developers/blog/post/tutorial-protecting-sensitive-info-docker">Keeping Sensitive Information outside of Docker&nbsp;Image</a></li>
+<li><a href="http://www.scala-sbt.org/sbt-native-packager/formats/docker.html#configuration"><span class="caps">SBT</span> Docker&nbsp;Plugin</a></li>
+</ul>
+            <a href="#" class="go-top">Go Top</a>
+            <ul>
+                    <li style="list-style-type: none;">
+                        <<
+                        <a href="http://objects-and-lambdas.com/learning-play-framework-8.html">
+                            Let&#8217;s Play! - My Play Framework Learning Journey (8) - Play Swagger&nbsp;Annotation
+                        </a>
+                    </li>
+                    <li style="list-style-type: none;">
+                        >>
+                        <a href="http://objects-and-lambdas.com/learning-play-framework-10.html">
+                            Let&#8217;s Play! - My Play Framework Learning Journey (10) - Using Jackson Directly for Json&nbsp;Processing
+                        </a>
+                    </li>
+            </ul>            
+    <div class="comments">
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = "objectsandlambdas"; // required: replace example with your forum shortname
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+<footer class="footer">
+    <p>&copy; Charles Xu Cheng &ndash;
+        Built with <a href="https://github.com/PurePelicanTheme/pure-single">Pure Theme</a>
+        for <a href="http://blog.getpelican.com/">Pelican</a>
+    </p>
+</footer>        </div>
+    </div>
+    </div>
+    <script>
+        var $top = $('.go-top');
+
+        // Show or hide the sticky footer button
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                $top.fadeIn(200);
+            } else {
+                $top.fadeOut(200);
+            }
+        });
+
+        // Animate the scroll to top
+        $top.click(function(event) {
+            event.preventDefault();
+            $('html, body').animate({scrollTop: 0}, 300);
+        })
+
+        // Makes sure that the href="#" attached to the <a> elements
+        // don't scroll you back up the page.
+        $('body').on('click', 'a[href="#"]', function(event) {
+            event.preventDefault();
+        });
+    </script>
+    <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+        try {
+            var pageTracker = _gat._getTracker("UA-42943339-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+    </script>
+
+</body>
+</html>

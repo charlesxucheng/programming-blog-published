@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Objects and Lambdas, Embracing OOP and FP">
+
+        <link rel="alternate"  href="http://objects-and-lambdas.com/feeds/all.atom.xml" type="application/atom+xml" title="Objects and Lambdas Full Atom Feed"/>
+
+        <title>Let’s Play! - My Play Framework Learning Journey (4) - Testing Play Applications // Objects and Lambdas // Embracing OOP and FP</title>
+
+    <link href="/images/favicon.ico" rel="icon">
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.3.0/pure-min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pure.css">
+    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pygments.css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fitvids/1.0.1/jquery.fitvids.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $(".content").fitVids();
+        });
+    </script>
+</head>
+
+<body>
+    <div class="pure-g-r" id="layout">
+        <div class="sidebar pure-u">
+            <div class="cover-img" style="background-image: url('/images/cover.png')">
+                <div class="cover-body">
+                    <header class="header">
+                        <hgroup>
+                            <img class="avatar" src="/images/profile.png">
+                            <h1 class="brand-main"><a href="http://objects-and-lambdas.com">Objects and Lambdas</a></h1>
+                            <p class="tagline">Embracing OOP and FP</p>
+                                <p class="links"><a href="/categories.html">Categories</a></p>
+                                <p class="links"><a href="/tags.html">Tags</a></p>
+                                <p class="links"><a href="/pages/about.html">About</a></p>
+                                <p class="social">
+                                    <a href="https://twitter.com/charlesxucheng">
+                                        <i class="fa fa-twitter fa-3x"></i>
+                                    </a>
+                                    <a href="https://www.linkedin.com/in/cheng-xu-1b3a1b21/">
+                                        <i class="fa fa-linkedin fa-3x"></i>
+                                    </a>
+                                    <a href="https://github.com/charlesxucheng">
+                                        <i class="fa fa-github fa-3x"></i>
+                                    </a>
+                                </p>
+                        </hgroup>
+                    </header>
+                </div>
+            </div>
+        </div>
+    <div class="pure-u">
+        <div class="content">
+            <section class="post">
+                <header class="post-header">
+                    <h1>Let&#8217;s Play! - My Play Framework Learning Journey (4) - Testing Play&nbsp;Applications</h1>
+                        <p class="post-meta">
+                            // under                                 <a class="post-category" href="http://objects-and-lambdas.com/tag/scala.html">scala</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/java.html">java</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/play-framework.html">play framework</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/functional-programming.html">functional programming</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/web-framework.html">web framework</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/guice.html">guice</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/scala-guice.html">scala-guice</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/dependency-injection.html">dependency injection</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/testing.html">testing</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/json.html">Json</a>
+                        </p>
+                </header>
+            </section>
+            <p>In this article I will be talking about things to take note when testing a Play&nbsp;application.</p>
+<p>If you uses constructor injection for the classes you write, testing them will be easy because they are just <span class="caps">POJO</span> classes. You can directly instantiate the class and pass in all the dependencies to the constructor. For&nbsp;example:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">repo</span><span class="p">:</span><span class="w"> </span><span class="nc">CurrencyRepo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mock</span><span class="p">[</span><span class="nc">CurrencyRepo</span><span class="p">]</span>
+<span class="kd">val</span><span class="w"> </span><span class="n">service</span><span class="p">:</span><span class="w"> </span><span class="nc">CurrencyService</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nc">CurrencyService</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
+<span class="p">...</span>
+</code></pre></div>
+
+<h1>Using&nbsp;GuiceApplicationBuilder</h1>
+<p>Alternatively, you can define a test module to provide the bindings required for testing. You can then use the GuiceApplicationBuilder class provided by Play to create an play.api.Application and use it for&nbsp;testing:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">repo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mock</span><span class="p">[</span><span class="nc">CurrencyRepo</span><span class="p">]</span>
+<span class="kd">val</span><span class="w"> </span><span class="n">testModule</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nc">AbstractModule</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="nc">ScalaModule</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">override</span><span class="w"> </span><span class="k">def</span><span class="w"> </span><span class="nf">configure</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">bind</span><span class="p">[</span><span class="nc">CurrencyRepo</span><span class="p">].</span><span class="n">toInstance</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">val</span><span class="w"> </span><span class="n">application</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nc">GuiceApplicationBuilder</span><span class="p">().</span><span class="n">bindings</span><span class="p">(</span><span class="n">testModule</span><span class="p">).</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>You can then get the object instance that you want to test from the application&#8217;s injector.instanceOf method, and all the dependencies will be taken care for you by&nbsp;Guice:</p>
+<div class="highlight"><pre><span></span><code><span class="n">running</span><span class="p">(</span><span class="n">application</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">application</span><span class="p">.</span><span class="n">injector</span><span class="p">.</span><span class="n">instanceOf</span><span class="p">[</span><span class="nc">CurrencyController</span><span class="p">]</span>
+<span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">controller</span><span class="p">.</span><span class="n">getAll</span><span class="p">().</span><span class="n">apply</span><span class="p">(</span><span class="nc">FakeRequest</span><span class="p">())</span>
+<span class="w">  </span><span class="n">status</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="n">mustBe</span><span class="w"> </span><span class="n">httpStatus</span>
+<span class="w">  </span><span class="n">contentType</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="n">mustBe</span><span class="w"> </span><span class="nc">Some</span><span class="p">(</span><span class="s">&quot;application/json&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="n">contentAsJson</span><span class="p">(</span><span class="n">result</span><span class="p">).</span><span class="n">as</span><span class="p">[</span><span class="nc">Seq</span><span class="p">[</span><span class="nc">Currency</span><span class="p">]]</span><span class="w"> </span><span class="n">mustBe</span><span class="w"> </span><span class="n">currencies</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Play provides a set of helper methods called &#8220;running&#8221; defined in play.api.test.PlayRunners. &#8220;Running&#8221; takes in a block of code and executes that&nbsp;block.</p>
+<p>Method status, contentType and contentAsJson are useful methods from play.api.test.Helpers that exposes the different parts of the response for&nbsp;verification.</p>
+<p>The above example tests the controller by calling its method directly. Alternatively, you can also invoke the endpoint defined via play.api.test.RouteInvokers.route method. For&nbsp;example:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">route</span><span class="p">(</span><span class="n">application</span><span class="p">,</span><span class="w"> </span><span class="nc">FakeRequest</span><span class="p">(</span><span class="s">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/url-path/&quot;</span><span class="p">).</span><span class="n">withBody</span><span class="p">(</span><span class="n">body</span><span class="p">)).</span><span class="n">get</span>
+</code></pre></div>
+
+<p>You need to specify the actual web service <span class="caps">URL</span> path with any parameters required in the FakeRequest in this&nbsp;case.</p>
+<h1>Calling&nbsp;Action.apply()</h1>
+<p>Take a deeper look at this&nbsp;line:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">controller</span><span class="p">.</span><span class="n">getAll</span><span class="p">().</span><span class="n">apply</span><span class="p">(</span><span class="nc">FakeRequest</span><span class="p">())</span>
+</code></pre></div>
+
+<p>Method getAll is defined as&nbsp;follows:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">getAll</span><span class="p">:</span><span class="w"> </span><span class="nc">Action</span><span class="p">[</span><span class="nc">AnyContent</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nc">Action</span><span class="p">.</span><span class="n">async</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">repo</span><span class="p">.</span><span class="n">findAll</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nc">Ok</span><span class="p">(</span><span class="nc">Json</span><span class="p">.</span><span class="n">toJson</span><span class="p">(</span><span class="n">result</span><span class="p">))}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Take note that Action[A] has two apply methods. One accepts Request[A] and returns Future[Result]. The other accepts a RequestHeader and returns an Accumulator[ByteString, Result]. The Accumulator is basically a sink that accepts the body as a stream of ByteString and returns the result as a Future when&nbsp;run. </p>
+<p>In your test, you should usually call the method that takes Request[A] and returns Future[Result], unless you are attempting to test parsing a raw stream as the body. Pay attention to ensure the right apply() method is&nbsp;called.</p>
+<h1>Dealing with Json data in Request Body for&nbsp;Testing</h1>
+<p>Refer to <a href="http://objects-and-lambdas.com/learning-play-framework-5.html">this blog</a> for more about how to use JsonBodyParser to convert objects to Json data required in request body during&nbsp;testing.</p>
+<h1>Getting and Verifying Json data in Response&nbsp;Body</h1>
+<p>As mentioned above, Play provides a contentAsJson method in play.api.test.Helpers class to expose the content in Json format (returns a JsValue). You can then convert Json to the desired object type via &#8220;JsValue.as[T]&#8221; method, given an implicit Format is in scope.&nbsp;Example:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">controller</span><span class="p">.</span><span class="n">methodA</span><span class="p">.</span><span class="n">apply</span><span class="p">(...)</span>
+<span class="n">contentAsJson</span><span class="p">(</span><span class="n">result</span><span class="p">).</span><span class="n">as</span><span class="p">[</span><span class="nc">TypeA</span><span class="p">]</span><span class="w"> </span><span class="n">mustBe</span><span class="w"> </span><span class="nc">TypeA</span><span class="p">(...)</span>
+</code></pre></div>
+
+<h1>Testing Async&nbsp;methods</h1>
+<p>Many Play and Slick methods are asynchronous and return Future objects. ScalaTest provides Async*Spec for testing with Future objects. For example, if you have a Repo or Service method that returns a&nbsp;Future:</p>
+<div class="highlight"><pre><span></span><code><span class="k">private</span><span class="p">[</span><span class="n">domain</span><span class="p">]</span><span class="w"> </span><span class="k">def</span><span class="w"> </span><span class="nf">methodA</span><span class="p">(...):</span><span class="w"> </span><span class="nc">Future</span><span class="p">[</span><span class="nc">BigDecimal</span><span class="p">]</span>
+</code></pre></div>
+
+<p>You can test it as&nbsp;follows:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ServiceATest</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nc">AsyncWordSpec</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="p">...</span>
+<span class="w">  </span><span class="n">service</span><span class="p">.</span><span class="n">methodA</span><span class="p">(...)</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="n">shouldBe</span><span class="w"> </span><span class="mf">100.32</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h1>Additional&nbsp;References</h1>
+<ul>
+<li><a href="https://www.playframework.com/documentation/2.5.x/ScalaTestingWithGuice">Play Documentation - Testing with&nbsp;Guice</a></li>
+<li><a href="http://www.scalatest.org/user_guide">Scalatest User&nbsp;Guide</a></li>
+</ul>
+            <a href="#" class="go-top">Go Top</a>
+            <ul>
+                    <li style="list-style-type: none;">
+                        <<
+                        <a href="http://objects-and-lambdas.com/learning-play-framework-3.html">
+                            Let&#8217;s Play! - My Play Framework Learning Journey (3) - Dependency Injection with&nbsp;Guice
+                        </a>
+                    </li>
+                    <li style="list-style-type: none;">
+                        >>
+                        <a href="http://objects-and-lambdas.com/learning-play-framework-5.html">
+                            Let&#8217;s Play! - My Play Framework Learning Journey (5) - Working with&nbsp;Json
+                        </a>
+                    </li>
+            </ul>            
+    <div class="comments">
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = "objectsandlambdas"; // required: replace example with your forum shortname
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+<footer class="footer">
+    <p>&copy; Charles Xu Cheng &ndash;
+        Built with <a href="https://github.com/PurePelicanTheme/pure-single">Pure Theme</a>
+        for <a href="http://blog.getpelican.com/">Pelican</a>
+    </p>
+</footer>        </div>
+    </div>
+    </div>
+    <script>
+        var $top = $('.go-top');
+
+        // Show or hide the sticky footer button
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                $top.fadeIn(200);
+            } else {
+                $top.fadeOut(200);
+            }
+        });
+
+        // Animate the scroll to top
+        $top.click(function(event) {
+            event.preventDefault();
+            $('html, body').animate({scrollTop: 0}, 300);
+        })
+
+        // Makes sure that the href="#" attached to the <a> elements
+        // don't scroll you back up the page.
+        $('body').on('click', 'a[href="#"]', function(event) {
+            event.preventDefault();
+        });
+    </script>
+    <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+        try {
+            var pageTracker = _gat._getTracker("UA-42943339-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+    </script>
+
+</body>
+</html>

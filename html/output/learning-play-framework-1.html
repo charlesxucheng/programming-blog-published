@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Objects and Lambdas, Embracing OOP and FP">
+
+        <link rel="alternate"  href="http://objects-and-lambdas.com/feeds/all.atom.xml" type="application/atom+xml" title="Objects and Lambdas Full Atom Feed"/>
+
+        <title>Let’s Play! - My Play Framework Learning Journey (1) - Introduction // Objects and Lambdas // Embracing OOP and FP</title>
+
+    <link href="/images/favicon.ico" rel="icon">
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.3.0/pure-min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pure.css">
+    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pygments.css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fitvids/1.0.1/jquery.fitvids.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $(".content").fitVids();
+        });
+    </script>
+</head>
+
+<body>
+    <div class="pure-g-r" id="layout">
+        <div class="sidebar pure-u">
+            <div class="cover-img" style="background-image: url('/images/cover.png')">
+                <div class="cover-body">
+                    <header class="header">
+                        <hgroup>
+                            <img class="avatar" src="/images/profile.png">
+                            <h1 class="brand-main"><a href="http://objects-and-lambdas.com">Objects and Lambdas</a></h1>
+                            <p class="tagline">Embracing OOP and FP</p>
+                                <p class="links"><a href="/categories.html">Categories</a></p>
+                                <p class="links"><a href="/tags.html">Tags</a></p>
+                                <p class="links"><a href="/pages/about.html">About</a></p>
+                                <p class="social">
+                                    <a href="https://twitter.com/charlesxucheng">
+                                        <i class="fa fa-twitter fa-3x"></i>
+                                    </a>
+                                    <a href="https://www.linkedin.com/in/cheng-xu-1b3a1b21/">
+                                        <i class="fa fa-linkedin fa-3x"></i>
+                                    </a>
+                                    <a href="https://github.com/charlesxucheng">
+                                        <i class="fa fa-github fa-3x"></i>
+                                    </a>
+                                </p>
+                        </hgroup>
+                    </header>
+                </div>
+            </div>
+        </div>
+    <div class="pure-u">
+        <div class="content">
+            <section class="post">
+                <header class="post-header">
+                    <h1>Let&#8217;s Play! - My Play Framework Learning Journey (1) -&nbsp;Introduction</h1>
+                        <p class="post-meta">
+                            // under                                 <a class="post-category" href="http://objects-and-lambdas.com/tag/scala.html">scala</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/java.html">java</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/play-framework.html">play framework</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/functional-programming.html">functional programming</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/web-framework.html">web framework</a>
+                        </p>
+                </header>
+            </section>
+            <h1>Motivation</h1>
+<p>Recently I tried Play Framework and used it to build some RESTful web services in Scala and found Play to be an awesome framework to use, after clearing the initial hurdles. However, to people who are new to Play and things used by it by default (such as Guice), the learning curve might still be steep. Furthermore, I found Play&#8217;s documentation could some times be a bit more comprehensive (comparing to Spring which I have used previously), and there aren&#8217;t as many good resources one can find online for doing things in Play. These can easily turn people away, which I feel is a shame because Play is really great and enjoyable once you clear the initial&nbsp;hurdles.</p>
+<p>The official online documentation is fine with concepts, but when it comes to how-tos and working examples, there are times I could not find what I want from it. There is also no specific section for building RESTful web&nbsp;services.</p>
+<p>Therefore, I think it might be useful to share some of the things I have learnt along the way (some of which was learnt from <a href="http://www.lightbend.com/platform/subscription">the excellent Lightbend support team</a>) so that more people can benefit from them and try out Play. That&#8217;s why I started this blog series. Hope you will find it&nbsp;useful.</p>
+<h1>Environment</h1>
+<p>The following are used and will be mentioned in the subsequent blogs. I will blog in details about use of certain technologies other than Play, such as Guice, Scala-Guice, Slick,&nbsp;etc.</p>
+<ul>
+<li>Play Framework -&nbsp;2.5.11+</li>
+<li>Dependency Injection -&nbsp;Guice/Scala-Guice</li>
+<li>Relational Database - H2/<span class="caps">HSQLDB</span> for local testing and Oracle for&nbsp;production</li>
+<li>Database Access - Slick 3,&nbsp;HikariCP</li>
+<li>Swagger Specification - <a href="https://github.com/swagger-api/swagger-play">Swagger-Play2</a></li>
+<li>Unit Testing - ScalaTest,&nbsp;Mockito</li>
+<li>Containerization -&nbsp;Docker</li>
+<li>Caching -&nbsp;Caffeine</li>
+<li>Build tool - <span class="caps">SBT</span></li>
+</ul>
+<h1>Play Start&nbsp;Projects</h1>
+<p>The Play Framework website provides <a href="https://playframework.com/download#starters">a list of starter projects</a>. Since I am building a RESTful web service, I used the <a href="https://example.lightbend.com/v1/download/play-scala-rest-api-example">Play Scala <span class="caps">REST</span> <span class="caps">API</span> Example</a>. The guide for this starter project is located <a href="https://developer.lightbend.com/guides/play-rest-api/">here</a>.</p>
+<p>Stay&nbsp;tuned&#8230;</p>
+            <a href="#" class="go-top">Go Top</a>
+            <ul>
+                    <li style="list-style-type: none;">
+                        >>
+                        <a href="http://objects-and-lambdas.com/learning-play-framework-2.html">
+                            Let&#8217;s Play! - My Play Framework Learning Journey (2) - <span class="caps">SBT</span> <span class="caps">HTTP</span> Proxy&nbsp;Configuration
+                        </a>
+                    </li>
+            </ul>            
+    <div class="comments">
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = "objectsandlambdas"; // required: replace example with your forum shortname
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+<footer class="footer">
+    <p>&copy; Charles Xu Cheng &ndash;
+        Built with <a href="https://github.com/PurePelicanTheme/pure-single">Pure Theme</a>
+        for <a href="http://blog.getpelican.com/">Pelican</a>
+    </p>
+</footer>        </div>
+    </div>
+    </div>
+    <script>
+        var $top = $('.go-top');
+
+        // Show or hide the sticky footer button
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                $top.fadeIn(200);
+            } else {
+                $top.fadeOut(200);
+            }
+        });
+
+        // Animate the scroll to top
+        $top.click(function(event) {
+            event.preventDefault();
+            $('html, body').animate({scrollTop: 0}, 300);
+        })
+
+        // Makes sure that the href="#" attached to the <a> elements
+        // don't scroll you back up the page.
+        $('body').on('click', 'a[href="#"]', function(event) {
+            event.preventDefault();
+        });
+    </script>
+    <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+        try {
+            var pageTracker = _gat._getTracker("UA-42943339-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+    </script>
+
+</body>
+</html>

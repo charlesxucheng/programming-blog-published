@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Objects and Lambdas, Embracing OOP and FP">
+
+        <link rel="alternate"  href="http://objects-and-lambdas.com/feeds/all.atom.xml" type="application/atom+xml" title="Objects and Lambdas Full Atom Feed"/>
+
+        <title>Let’s Play! - My Play Framework Learning Journey (8) - Play Swagger Annotation // Objects and Lambdas // Embracing OOP and FP</title>
+
+    <link href="/images/favicon.ico" rel="icon">
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.3.0/pure-min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pure.css">
+    <link rel="stylesheet" href="http://objects-and-lambdas.com/theme/css/pygments.css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fitvids/1.0.1/jquery.fitvids.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $(".content").fitVids();
+        });
+    </script>
+</head>
+
+<body>
+    <div class="pure-g-r" id="layout">
+        <div class="sidebar pure-u">
+            <div class="cover-img" style="background-image: url('/images/cover.png')">
+                <div class="cover-body">
+                    <header class="header">
+                        <hgroup>
+                            <img class="avatar" src="/images/profile.png">
+                            <h1 class="brand-main"><a href="http://objects-and-lambdas.com">Objects and Lambdas</a></h1>
+                            <p class="tagline">Embracing OOP and FP</p>
+                                <p class="links"><a href="/categories.html">Categories</a></p>
+                                <p class="links"><a href="/tags.html">Tags</a></p>
+                                <p class="links"><a href="/pages/about.html">About</a></p>
+                                <p class="social">
+                                    <a href="https://twitter.com/charlesxucheng">
+                                        <i class="fa fa-twitter fa-3x"></i>
+                                    </a>
+                                    <a href="https://www.linkedin.com/in/cheng-xu-1b3a1b21/">
+                                        <i class="fa fa-linkedin fa-3x"></i>
+                                    </a>
+                                    <a href="https://github.com/charlesxucheng">
+                                        <i class="fa fa-github fa-3x"></i>
+                                    </a>
+                                </p>
+                        </hgroup>
+                    </header>
+                </div>
+            </div>
+        </div>
+    <div class="pure-u">
+        <div class="content">
+            <section class="post">
+                <header class="post-header">
+                    <h1>Let&#8217;s Play! - My Play Framework Learning Journey (8) - Play Swagger&nbsp;Annotation</h1>
+                        <p class="post-meta">
+                            // under                                 <a class="post-category" href="http://objects-and-lambdas.com/tag/scala.html">scala</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/java.html">java</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/play-framework.html">play framework</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/functional-programming.html">functional programming</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/web-framework.html">web framework</a>
+                                <a class="post-category" href="http://objects-and-lambdas.com/tag/swagger.html">swagger</a>
+                        </p>
+                </header>
+            </section>
+            <p><a href="http://swagger.io/">Swagger</a> is &#8220;a powerful open source framework backed by a large ecosystem of tools that helps you design, build, document, and consume your RESTful APIs.&#8221;. Using Swagger one can document and generate <span class="caps">API</span> specifications in Json and as a web <span class="caps">UI</span>. Swagger specifications are required by <span class="caps">API</span> related products like <span class="caps">IBM</span> <span class="caps">API</span> Connect to create service&nbsp;definitions.</p>
+<p>One use of Swagger is to annotate your code and generate specifications based on the annotations. <a href="https://github.com/swagger-api/swagger-play">Swagger-Play</a> does exactly this for Play Framework. The rest of this blog will cover this in details. Swagger can also be used to define <span class="caps">API</span> specifications and generate code stubs from the specification but that usage is not covered&nbsp;here.</p>
+<h1>Using&nbsp;Swagger-Play</h1>
+<p>To use Swagger-Play, follow the following&nbsp;steps:</p>
+<ul>
+<li>Add Swagger-play&nbsp;dependency</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nx">libraryDependencies</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;io.swagger&quot;</span><span class="w"> </span><span class="o">%%</span><span class="w"> </span><span class="s">&quot;swagger-play2&quot;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;1.5.3&quot;</span>
+</code></pre></div>
+
+<ul>
+<li>Enable Swagger module in Play by adding the following to&nbsp;application.conf:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>play.modules.enabled += &quot;play.modules.swagger.SwaggerModule&quot;
+</code></pre></div>
+
+<ul>
+<li>Optionally add more Swagger <span class="caps">API</span> information in application.conf. For&nbsp;example:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>api.version = &quot;v0.1.0&quot;
+swagger.api.info = {
+  contact : &quot;Charles Xu Cheng&quot;,
+  description : &quot;Demo REST APIs&quot;,
+  title : &quot;Demo REST APIs&quot;,
+  termsOfService : &quot;TODO&quot;
+}
+</code></pre></div>
+
+<ul>
+<li>Modify Play&#8217;s routes file to include the&nbsp;following:</li>
+</ul>
+<div class="highlight"><pre><span></span><code># Swagger Json
+GET     /swagger.json           controllers.ApiHelpController.getResources
+# Swagger UI
+GET     /docs/              controllers.Assets.at(path=&quot;/public/swagger-ui&quot;,file=&quot;index.html&quot;)
+GET     /docs/swagger.json  controllers.ApiHelpController.getResources
+GET     /docs/*file         controllers.Assets.at(path=&quot;/public/swagger-ui&quot;,file)
+</code></pre></div>
+
+<ul>
+<li>Use Swagger annotations such as @Api, @ApiModel, @ApiModelProperty and @ApiOperation at the respective classes. Swagger-Play will generate Swagger Json and <span class="caps">UI</span> based on&nbsp;those.</li>
+</ul>
+<p>Example ApiModel&nbsp;type:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@ApiModel</span>
+<span class="k">case</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ConversionRequest</span><span class="p">(</span>
+<span class="w">  </span><span class="nd">@ApiModelProperty</span><span class="p">(</span><span class="n">required</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;desc&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">attr1</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">,</span>
+<span class="w">  </span><span class="nd">@ApiModelProperty</span><span class="p">(</span><span class="n">required</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;desc&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">attr2</span><span class="p">:</span><span class="w"> </span><span class="nc">BigDecimal</span><span class="p">)</span>
+</code></pre></div>
+
+<p>One thing to note is that Swagger-Play does not work with Play&#8217;s routing using Router&nbsp;classes.</p>
+<h2>Annotating Request&nbsp;Body</h2>
+<p>With @Api, @ApiModel, @ApiModelProperty and @ApiOperation, you can document most aspects of your APIs. However, when you pass in some objects in the request body as Json in Play, there is no method parameter variable for you to annotation&nbsp;with.</p>
+<p>Luckily, Swagger provides an @ApiImplicitParams for this&nbsp;case.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@ApiImplicitParams</span><span class="p">(</span><span class="nc">Array</span><span class="p">[</span><span class="nc">ApiImplicitParam</span><span class="p">](</span><span class="k">new</span><span class="w"> </span><span class="nc">ApiImplicitParam</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;body&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Conversion Request&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">required</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">dataType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;controllers.ConversionRequest&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">paramType</span><span class="o">=</span><span class="s">&quot;body&quot;</span><span class="p">)))</span>
+</code></pre></div>
+
+<p>Place it before the controller method that takes input from request&nbsp;body.</p>
+<p>Also take note of the syntax of specifying array of annotations in Scala in the above example, as the normal Java syntax does not work with&nbsp;Scala.</p>
+<h1>Additional&nbsp;References</h1>
+<ul>
+<li><a href="https://github.com/swagger-api/swagger-play/tree/master/play-2.5/swagger-play2">Swagger-Play2</a></li>
+<li><a href="http://sakthipriyan.com/2016/07/20/documenting-play-framework-using-swagger.html">Swagger Play&nbsp;Guide</a></li>
+<li><a href="https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X">Swagger&nbsp;Annotations</a></li>
+</ul>
+            <a href="#" class="go-top">Go Top</a>
+            <ul>
+                    <li style="list-style-type: none;">
+                        <<
+                        <a href="http://objects-and-lambdas.com/learning-play-framework-7.html">
+                            Let&#8217;s Play! - My Play Framework Learning Journey (7) - Play Caching with&nbsp;Caffeine
+                        </a>
+                    </li>
+                    <li style="list-style-type: none;">
+                        >>
+                        <a href="http://objects-and-lambdas.com/learning-play-framework-9.html">
+                            Let&#8217;s Play! - My Play Framework Learning Journey (9) - Deploy Play Application to&nbsp;Docker
+                        </a>
+                    </li>
+            </ul>            
+    <div class="comments">
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = "objectsandlambdas"; // required: replace example with your forum shortname
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+<footer class="footer">
+    <p>&copy; Charles Xu Cheng &ndash;
+        Built with <a href="https://github.com/PurePelicanTheme/pure-single">Pure Theme</a>
+        for <a href="http://blog.getpelican.com/">Pelican</a>
+    </p>
+</footer>        </div>
+    </div>
+    </div>
+    <script>
+        var $top = $('.go-top');
+
+        // Show or hide the sticky footer button
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                $top.fadeIn(200);
+            } else {
+                $top.fadeOut(200);
+            }
+        });
+
+        // Animate the scroll to top
+        $top.click(function(event) {
+            event.preventDefault();
+            $('html, body').animate({scrollTop: 0}, 300);
+        })
+
+        // Makes sure that the href="#" attached to the <a> elements
+        // don't scroll you back up the page.
+        $('body').on('click', 'a[href="#"]', function(event) {
+            event.preventDefault();
+        });
+    </script>
+    <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+        try {
+            var pageTracker = _gat._getTracker("UA-42943339-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+    </script>
+
+</body>
+</html>
